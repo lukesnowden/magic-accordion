@@ -1,10 +1,11 @@
 #Magic Accordion
 
-more information http://luke.sno.wden.co.uk/magic-accordion
+more information and demo http://luke.sno.wden.co.uk/magic-accordion
 
 Really cant get much more simpler than this...
 
 ```javascript
+// these are defaults, no need to pass the options
 $('.someSelectorOfContentWrapper').magicAccordion({
 	headingTag 	: 'h2',
 	bodyClass 	: 'body',
