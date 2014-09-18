@@ -45,3 +45,14 @@ $('.someSelectorOfContentWrapper').magicAccordion({
 
 </div>
 ```
+
+If you want to listed to some events... here you go
+
+```javascript
+$('.magic-accordion').on( 'opened.magic', function(e){
+	e.body.html('mwhahahahah');
+});
+$('.magic-accordion').on( 'closed.magic', function(e){
+	e.head.html('you closed me!!');
+});
+```

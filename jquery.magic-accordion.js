@@ -162,11 +162,47 @@
 
 			$( '.' + opts.bodyClass, accordion ).slideUp(0);
 
-			$( '.' + opts.headClass, accordion ).click( function(e) {
+			/**
+			 * [closedEvent description]
+			 * @param  {[type]} e [description]
+			 * @return {[type]}   [description]
+			 */
+
+			var closedEvent = function(e){
+				var magicEvent = $.Event( 'closed.magic' );
+				magicEvent.head = $(this).prev();
+				magicEvent.body = $(this);
+				magicEvent.index = Math.floor( $(this).index()/2 );
+				accordion.trigger( magicEvent );
+			};
+
+			/**
+			 * [openedEvent description]
+			 * @param  {[type]} e [description]
+			 * @return {[type]}   [description]
+			 */
+
+			var openedEvent = function(e){
+				var magicEvent = $.Event( 'opened.magic' );
+				magicEvent.head = head;
+				magicEvent.body = $(this);
+				magicEvent.index = Math.floor( $(this).index()/2 );
+				accordion.trigger( magicEvent );
+			};
+
+			$( '.' + opts.headClass, accordion ).bind( 'click.magic', function(e) {
 
 				e.preventDefault();
+
+				/**
+				 * [head description]
+				 * @type {[type]}
+				 */
+
+				var head = $(this);
+
 				$( '.' + opts.headClass + '.' + opts.activeClass, accordion ).removeClass( opts.activeClass );
-				$(this).addClass( opts.activeClass );
+				head.addClass( opts.activeClass );
 
 				/**
 				 * [open description]
@@ -180,14 +216,14 @@
 				 * @type {[type]}
 				 */
 
-				var toOpen = $(this).next();
+				var toOpen = head.next();
 
 				if( open.get(0) !== toOpen.get(0) ) {
-					toOpen.slideDown( opts.speed );
-					open.slideUp( opts.speed );
+					toOpen.slideDown( opts.speed, openedEvent );
+					open.slideUp( opts.speed, closedEvent );
 				} else {
 					$( '.' + opts.headClass + '.' + opts.activeClass, accordion ).removeClass( opts.activeClass );
-					open.slideUp( opts.speed );
+					open.slideUp( opts.speed, closedEvent );
 				}
 
 			});
