@@ -6,17 +6,30 @@ Really cant get much more simpler than this...
 
 ```javascript
 // these are defaults, no need to pass the options
-$('.someSelectorOfContentWrapper').magicAccordion({
+$('.content').magicAccordion({
 	headingTag 	: 'h2',
 	bodyClass 	: 'body',
 	headClass 	: 'head',
 	activeClass : 'active',
 	speed 		: 200
+}).on( 'opened.magic', function(e){
+	console.log(e.head);
+}).on( 'closed.magic', function(e){
+	console.log(e.body);
+});
+var app = $('.content').data( 'magic-accordion' );
+$('.unbind').click( function(e) {
+	e.preventDefault();
+	app.unbind();
+});
+$('.rebind').click( function(e) {
+	e.preventDefault();
+	app.rebind();
 });
 ```
 
 ```html
-<div class="someSelectorOfContentWrapper">
+<div class="content">
 
 	<h2>Some amazing header</h2>
 
@@ -44,15 +57,4 @@ $('.someSelectorOfContentWrapper').magicAccordion({
 	<p>Curabitur blandit tempus ardua ridiculus sed magna. Inmensae subtilitatis, obscuris et malesuada fames. Vivamus sagittis lacus vel augue laoreet rutrum faucibus. Unam incolunt Belgae, aliam Aquitani, tertiam. Pellentesque habitant morbi tristique senectus et netus. Qui ipsorum lingua Celtae, nostra Galli appellantur.</p>
 
 </div>
-```
-
-If you want to listed to some events... here you go
-
-```javascript
-$('.magic-accordion').on( 'opened.magic', function(e){
-	e.body.html('mwhahahahah');
-});
-$('.magic-accordion').on( 'closed.magic', function(e){
-	e.head.html('you closed me!!');
-});
 ```

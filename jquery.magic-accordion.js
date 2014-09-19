@@ -78,158 +78,210 @@
 			 * @type {[type]}
 			 */
 
-			var accordion = $('<div class="magic-accordion"></div>');
+			var accordion;
 
 			/**
-			 * [description]
+			 * [splitContent description]
 			 * @return {[type]} [description]
 			 */
 
-			$( '> ' + opts.headingTag, jq ).each( function() {
+			var splitContent = function() {
 
-				/**
-				 * [heading description]
-				 * @type {[type]}
-				 */
+				sections = [];
 
-				var heading = $(this);
+				accordion = $('<div class="magic-accordion"></div>');
 
-				/**
-				 * [contentElms description]
-				 * @type {Array}
-				 */
+				$( '> ' + opts.headingTag, jq ).each( function() {
 
-				var contentElms = [];
+					/**
+					 * [heading description]
+					 * @type {[type]}
+					 */
 
-				/**
-				 * [stop description]
-				 * @type {Boolean}
-				 */
+					var heading = $(this);
 
-				var stop = false;
+					/**
+					 * [contentElms description]
+					 * @type {Array}
+					 */
 
-				/**
-				 * [description]
-				 * @return {[type]} [description]
-				 */
+					var contentElms = [];
 
-				heading.nextAll().each( function(){
+					/**
+					 * [stop description]
+					 * @type {Boolean}
+					 */
 
-					var contentElm = $(this);
+					var stop = false;
 
-					if( ! stop && contentElm[0].tagName.toLowerCase() !== opts.headingTag )
-						contentElms.push( contentElm[0] );
-					else
-						stop = true;
+					/**
+					 * [description]
+					 * @return {[type]} [description]
+					 */
+
+					heading.nextAll().each( function(){
+
+						var contentElm = $(this);
+
+						if( ! stop && contentElm[0].tagName.toLowerCase() !== opts.headingTag )
+							contentElms.push( contentElm.clone() );
+						else
+							stop = true;
+
+					});
+
+					sections.push({
+						heading : heading.clone(),
+						content : contentElms
+					});
 
 				});
 
-				sections.push({
-					heading : heading[0],
-					content : contentElms
-				});
+			};
 
-			});
+			/**
+			 * [generateAccordion description]
+			 * @return {[type]} [description]
+			 */
 
+			var generateAccordion = function() {
 
-			for( var i in sections ) {
+				for( var i in sections ) {
 
-				/**
-				 * [head description]
-				 * @type {[type]}
-				 */
+					/**
+					 * [head description]
+					 * @type {[type]}
+					 */
 
-				var head = $( sections[i].heading ).addClass( opts.headClass );
+					var head = sections[i].heading.addClass( opts.headClass );
 
-				/**
-				 * [body description]
-				 * @type {[type]}
-				 */
+					/**
+					 * [body description]
+					 * @type {[type]}
+					 */
 
-				var body = $('<div></div>').addClass( opts.bodyClass );
+					var body = $('<div></div>').addClass( opts.bodyClass );
 
-				head.appendTo( accordion );
+					head.appendTo( accordion );
 
-				for( var n in sections[i].content ) {
-					$(sections[i].content[n]).appendTo( body );
+					for( var n in sections[i].content ) {
+						sections[i].content[n].appendTo( body );
+					}
+
+					body.appendTo( accordion );
+
 				}
 
-				body.appendTo( accordion );
+				accordion.insertAfter( jq );
+				$( '.' + opts.bodyClass, accordion ).slideUp(0);
+				jq.hide();
+			};
 
+			/**
+			 * [bindEvents description]
+			 * @return {[type]} [description]
+			 */
+
+			var bindEvents = function() {
+
+				$( '.' + opts.headClass, accordion ).unbind( 'click.magic' ).bind( 'click.magic', function(e) {
+
+					e.preventDefault();
+
+					/**
+					 * [head description]
+					 * @type {[type]}
+					 */
+
+					var head = $(this);
+
+					/**
+					 * [closedEvent description]
+					 * @param  {[type]} e [description]
+					 * @return {[type]}   [description]
+					 */
+
+					var closedEvent = function(e){
+						var magicEvent = $.Event( 'closed.magic' );
+						magicEvent.head = $(this).prev();
+						magicEvent.body = $(this);
+						magicEvent.index = Math.floor( $(this).index()/2 );
+						jq.trigger( magicEvent );
+					};
+
+					/**
+					 * [openedEvent description]
+					 * @param  {[type]} e [description]
+					 * @return {[type]}   [description]
+					 */
+
+					var openedEvent = function(e){
+						var magicEvent = $.Event( 'opened.magic' );
+						magicEvent.head = head;
+						magicEvent.body = $(this);
+						magicEvent.index = Math.floor( $(this).index()/2 );
+						jq.trigger( magicEvent );
+					};
+
+					$( '.' + opts.headClass + '.' + opts.activeClass, accordion ).removeClass( opts.activeClass );
+					head.addClass( opts.activeClass );
+
+					/**
+					 * [open description]
+					 * @type {[type]}
+					 */
+
+					var open = $( '.' + opts.bodyClass + ':visible', accordion);
+
+					/**
+					 * [toOpen description]
+					 * @type {[type]}
+					 */
+
+					var toOpen = head.next();
+
+					if( open.get(0) !== toOpen.get(0) ) {
+						toOpen.slideDown( opts.speed, openedEvent );
+						open.slideUp( opts.speed, closedEvent );
+					} else {
+						$( '.' + opts.headClass + '.' + opts.activeClass, accordion ).removeClass( opts.activeClass );
+						open.slideUp( opts.speed, closedEvent );
+					}
+
+				});
 			}
 
-			jq.replaceWith(accordion);
-
-			$( '.' + opts.bodyClass, accordion ).slideUp(0);
-
 			/**
-			 * [closedEvent description]
-			 * @param  {[type]} e [description]
-			 * @return {[type]}   [description]
+			 * [unbind description]
+			 * @return {[type]} [description]
 			 */
 
-			var closedEvent = function(e){
-				var magicEvent = $.Event( 'closed.magic' );
-				magicEvent.head = $(this).prev();
-				magicEvent.body = $(this);
-				magicEvent.index = Math.floor( $(this).index()/2 );
-				accordion.trigger( magicEvent );
-			};
-
-			/**
-			 * [openedEvent description]
-			 * @param  {[type]} e [description]
-			 * @return {[type]}   [description]
-			 */
-
-			var openedEvent = function(e){
-				var magicEvent = $.Event( 'opened.magic' );
-				magicEvent.head = head;
-				magicEvent.body = $(this);
-				magicEvent.index = Math.floor( $(this).index()/2 );
-				accordion.trigger( magicEvent );
-			};
-
-			$( '.' + opts.headClass, accordion ).bind( 'click.magic', function(e) {
-
-				e.preventDefault();
-
-				/**
-				 * [head description]
-				 * @type {[type]}
-				 */
-
-				var head = $(this);
-
-				$( '.' + opts.headClass + '.' + opts.activeClass, accordion ).removeClass( opts.activeClass );
-				head.addClass( opts.activeClass );
-
-				/**
-				 * [open description]
-				 * @type {[type]}
-				 */
-
-				var open = $( '.' + opts.bodyClass + ':visible', accordion);
-
-				/**
-				 * [toOpen description]
-				 * @type {[type]}
-				 */
-
-				var toOpen = head.next();
-
-				if( open.get(0) !== toOpen.get(0) ) {
-					toOpen.slideDown( opts.speed, openedEvent );
-					open.slideUp( opts.speed, closedEvent );
-				} else {
-					$( '.' + opts.headClass + '.' + opts.activeClass, accordion ).removeClass( opts.activeClass );
-					open.slideUp( opts.speed, closedEvent );
+			this.unbind = function() {
+				if( ! jq.is( ':visible' ) ) {
+					accordion.remove();
+					jq.show();
 				}
+			};
 
-			});
+			/**
+			 * [rebind description]
+			 * @return {[type]} [description]
+			 */
+
+			this.rebind = function() {
+				if( jq.is( ':visible' ) ) {
+					splitContent();
+					generateAccordion();
+					bindEvents();
+				}
+			}
+
+			splitContent();
+			generateAccordion();
+			bindEvents();
 
 			// may want to add some public methods at some point...
-			accordion.data( 'magicAccordion', this );
+			jq.data( 'magic-accordion', this );
 
 		};
 
