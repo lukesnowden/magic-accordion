@@ -42,6 +42,13 @@
 			activeClass : 'active',
 
 			/**
+			 * [easing description]
+			 * @type {String}
+			 */
+
+			easing : 'linear',
+
+			/**
 			 * [speed description]
 			 * @type {Number}
 			 */
@@ -241,11 +248,23 @@
 					var toOpen = head.next();
 
 					if( open.get(0) !== toOpen.get(0) ) {
-						toOpen.slideDown( opts.speed, openedEvent );
-						open.slideUp( opts.speed, closedEvent );
+						toOpen.slideDown({
+							complete : openedEvent,
+							duration : opts.speed,
+							easing : opts.easing
+						});
+						open.slideUp({
+							complete : closedEvent,
+							duration : opts.speed,
+							easing : opts.easing
+						});
 					} else {
 						$( '.' + opts.headClass + '.' + opts.activeClass, accordion ).removeClass( opts.activeClass );
-						open.slideUp( opts.speed, closedEvent );
+						open.slideUp({
+							complete : closedEvent,
+							duration : opts.speed,
+							easing : opts.easing
+						});
 					}
 
 				});
