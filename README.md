@@ -29,6 +29,8 @@ $('.rebind').click( function(e) {
 ```
 
 ```html
+<a href="#" class="unbind">Unbind</a>
+<a href="#" class="rebind disabled">Rebind</a>
 <div class="content">
 
 	<h2>Some amazing header</h2>
