@@ -88,6 +88,19 @@
 			var accordion;
 
 			/**
+			 * [createdEvent description]
+			 * @param  {[type]} e [description]
+			 * @return {[type]}   [description]
+			 */
+
+			var createdEvent = function() {
+				var magicEvent = $.Event( 'created.magic' );
+				magicEvent.sections = sections;
+				magicEvent.accordion = accordion;
+				jq.trigger( magicEvent );
+			}
+
+			/**
 			 * [splitContent description]
 			 * @return {[type]} [description]
 			 */
@@ -182,6 +195,8 @@
 				accordion.insertAfter( jq );
 				$( '.' + opts.bodyClass, accordion ).slideUp(0);
 				jq.hide();
+				createdEvent();
+
 			};
 
 			/**
@@ -268,6 +283,7 @@
 					}
 
 				});
+
 			}
 
 			/**
@@ -293,6 +309,18 @@
 					generateAccordion();
 					bindEvents();
 				}
+			}
+
+			/**
+			 * [object description]
+			 * @return {[type]} [description]
+			 */
+
+			this.object = function() {
+				return {
+					accordion : accordion,
+					sections : sections
+				};
 			}
 
 			splitContent();
