@@ -1,6 +1,6 @@
 #Magic Accordion
 
-more information and demo http://luke.sno.wden.co.uk/magic-accordion
+more information and demo https://www.lukesnowden.co.uk/responsive-tabs-to-accordion
 
 Really cant get much more simpler than this...
 
